@@ -1,0 +1,10 @@
+const path = require("node:path");
+const { spawnSync } = require("node:child_process");
+const root = path.resolve(__dirname, "..");
+const platform = process.argv[2];
+if (!["app", "h5"].includes(platform)) throw new Error("Expected app or h5");
+const check = spawnSync(process.execPath, [path.join(root, "tools/internal-usb-profile.cjs"), "--check"], { cwd: root, env: process.env, stdio: "inherit" });
+if (check.error || check.status !== 0) process.exit(check.status || 1);
+const build = spawnSync(process.execPath, [path.join(root, "node_modules/@dcloudio/vite-plugin-uni/bin/uni.js"), "build", ...(platform === "app" ? ["-p", "app"] : []), "--mode", "production"], { cwd: root, env: process.env, stdio: "inherit" });
+if (build.error) console.error(build.error.message);
+process.exit(build.status ?? 1);

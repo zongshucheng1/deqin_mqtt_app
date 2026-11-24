@@ -1,0 +1,61 @@
+{
+    "name" : "德勤智造",
+    "appid" : "__UNI__4275A0F",
+    "description" : "企业生产运营管理系统 · 五库出入库",
+    "versionName" : "0.1.25",
+    "versionCode" : 125,
+    "transformPx" : false,
+    "vueVersion" : "3",
+    "uniStatistics" : {
+        "enable" : false
+    },
+    "app-plus" : {
+        "usingComponents" : true,
+        "nvueStyleCompiler" : "uni-app",
+        "compilerVersion" : 3,
+        "splashscreen" : {
+            "alwaysShowBeforeRender" : true,
+            "waiting" : true,
+            "autoclose" : true,
+            "delay" : 0
+        },
+        "modules" : {
+            "Barcode" : {},
+            "Camera" : {}
+        },
+        "distribute" : {
+            "icons" : {
+                "android" : {
+                    "mdpi" : "src/static/app-icons/logo-48.png",
+                    "hdpi" : "src/static/app-icons/logo-72.png",
+                    "xhdpi" : "src/static/app-icons/logo-96.png",
+                    "xxhdpi" : "src/static/app-icons/logo-144.png",
+                    "xxxhdpi" : "src/static/app-icons/logo-192.png"
+                }
+            },
+            "android" : {
+                "abiFilters" : [ "armeabi-v7a", "arm64-v8a", "x86" ],
+                "minSdkVersion" : 26,
+                "targetSdkVersion" : 35,
+                "permissions" : [
+                    "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CAMERA\"/>"
+                ]
+            },
+            "ios" : {
+                "dSYMs" : false,
+                "devices" : "iphone",
+                "privacyDescription" : {
+                    "NSCameraUsageDescription" : "用于扫描出入库标签上的二维码"
+                }
+            }
+        }
+    },
+    "h5" : {
+        "title" : "企业生产运营管理系统",
+        "router" : {
+            "mode" : "hash"
+        }
+    }
+}

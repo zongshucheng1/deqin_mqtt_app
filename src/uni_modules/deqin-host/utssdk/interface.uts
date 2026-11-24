@@ -1,0 +1,15 @@
+/** Synchronous sessions. Android returns the token; iOS returns checked JSON envelopes. */
+export type GetSessionToken = () => string
+export type SetSessionToken = (token: string) => string
+export type ClearSessionToken = () => string
+export type PrintDeviceLabel = (apiUrl:string,clientId:string,requestJson:string) => Promise<string>
+export type GetPrintDeviceId = () => string
+export type StartDevicePrinting = (apiUrl:string,clientId:string,configurationJson:string) => string
+export type StopDevicePrinting = () => string
+/** Foreground DNS-SD snapshots are independent of authenticated host execution. */
+export type StartPrinterDiscovery = (timeoutMs: number) => string
+/** Foreground USB OTG discovery; selecting a candidate requests Android USB permission. */
+export type StartUsbPrinterDiscovery = () => string
+export type GetPrinterDiscovery = (scanId: string) => string
+export type CancelPrinterDiscovery = (scanId: string) => string
+export type ProbeDiscoveredPrinter = (scanId: string, candidateId: string, paperWidthMm: number, paperHeightMm: number) => Promise<string>

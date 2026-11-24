@@ -5,3 +5,5 @@ dist/
 unpackage/
 .test-artifacts/
 .offline-build/
+/.hbuilderx/
+/.idea/

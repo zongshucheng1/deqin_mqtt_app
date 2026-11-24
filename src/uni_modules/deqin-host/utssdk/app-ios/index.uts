@@ -1,0 +1,60 @@
+// Synchronous iOS bridge methods return JSON envelopes; JavaScript validates them
+// and throws on failure before creating an authenticated request.
+export function getSessionToken(): string {
+  return DeqinSessionKeychain.readSession()
+}
+export function setSessionToken(token: string): string {
+  return DeqinSessionKeychain.writeSession(token)
+}
+export function clearSessionToken(): string {
+  return DeqinSessionKeychain.clearSession()
+}
+
+// iOS uses the server's PC print queue. Android host execution is unavailable here.
+const hostStatus = '{"supported":false,"running":false,"started":false,"state":"UNSUPPORTED","reason":"当前平台不支持持续采集和网络打印执行，请在已安装原生模块的Android固定主机上操作。"}'
+const discoveryStatus = '{"supported":false,"state":"UNSUPPORTED","candidates":[],"warnings":[],"message":"当前设备不支持本机打印机搜索，请使用服务器配置的电脑打印机。"}'
+const printError = '当前设备不支持本机打印，请使用服务器配置的电脑打印机。'
+
+export function openExternalMirror(): Promise<boolean> {
+  return new Promise<boolean>((resolve, _) => { resolve(false) })
+}
+
+function unsupportedPrint(): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    reject(new Error(printError))
+  })
+}
+
+export function getHostStatus(): string { return hostStatus }
+export function startHost(): string { return hostStatus }
+export function stopHost(): string { return hostStatus }
+export function clearHostCredentials(): void {}
+export function configureHost(configurationJson: string): string { return hostStatus }
+export function configureFromServer(apiUrl: string, sessionToken: string, hostId: string, factoryId: string, clientId: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => { resolve(hostStatus) })
+}
+export function requestHostPermissions(): Promise<string> {
+  return new Promise<string>((resolve, reject) => { resolve('{"granted":false,"reason":"UNSUPPORTED_PLATFORM"}') })
+}
+export function getPrintDeviceId(): string { return '' }
+export function startDevicePrinting(apiUrl: string, clientId: string, configurationJson: string): string { return hostStatus }
+export function stopDevicePrinting(): string { return hostStatus }
+export function printDeviceLabel(apiUrl: string, clientId: string, requestJson: string): Promise<string> {
+  return unsupportedPrint()
+}
+export function startPrinterDiscovery(timeoutMs: number = 12000): string { return discoveryStatus }
+export function startUsbPrinterDiscovery(): string { return discoveryStatus }
+export function getPrinterDiscovery(scanId: string): string { return discoveryStatus }
+export function cancelPrinterDiscovery(scanId: string): string { return discoveryStatus }
+export function probeDiscoveredPrinter(scanId: string, candidateId: string, paperWidthMm: number = 210, paperHeightMm: number = 297): Promise<string> {
+  return unsupportedPrint()
+}
+export function probePrinter(endpointUri: string, paperWidthMm: number = 210, paperHeightMm: number = 297): Promise<string> {
+  return unsupportedPrint()
+}
+export function testPrinter(requestJson: string): Promise<string> {
+  return unsupportedPrint()
+}
+export function getPrinterTest(requestKey: string): Promise<string> {
+  return unsupportedPrint()
+}

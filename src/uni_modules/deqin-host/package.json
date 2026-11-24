@@ -1,0 +1,5 @@
+{
+  "id": "deqin-host", "displayName": "德勤固定主机", "version": "0.1.0",
+  "description": "Native secure sessions for Android and iOS; Android MQTT capture and print execution",
+  "uni_modules": { "dependencies": [], "encrypt": [], "platforms": { "cloud": {}, "client": { "App": { "app-android": "y", "app-ios": "y" }, "H5-mobile": { "Safari": "n", "Android Browser": "n" } } } }
+}

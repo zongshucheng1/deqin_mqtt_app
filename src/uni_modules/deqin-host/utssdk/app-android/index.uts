@@ -1,0 +1,126 @@
+import { UTSAndroid } from 'io.dcloud.uts'
+import HostBridge from 'com.deqin.inout.host.android.HostBridge'
+import PrinterCheckBridge from 'com.deqin.inout.host.android.PrinterCheckBridge'
+import PrinterDiscoveryBridge from 'com.deqin.inout.host.android.PrinterDiscoveryBridge'
+import SessionBridge from 'com.deqin.inout.host.android.SessionBridge'
+import DevicePrintBridge from 'com.deqin.inout.host.android.DevicePrintBridge'
+import ExternalMirrorBridge from 'com.deqin.inout.host.android.ExternalMirrorBridge'
+import Build from 'android.os.Build'
+
+export function openExternalMirror(): Promise<boolean> {
+  return new Promise<boolean>((resolve, reject) => {
+    UTSAndroid.getDispatcher('main').async(function(_) {
+      const activity = UTSAndroid.getUniActivity()
+      if (activity == null) { resolve(false); return }
+      try { resolve(ExternalMirrorBridge.open(activity)) } catch (error) { reject(error) }
+    }, null)
+  })
+}
+
+// Synchronous on purpose: request headers must receive the current token before HTTP starts.
+export function getSessionToken(): string { return SessionBridge.getSessionToken(UTSAndroid.getAppContext()!) }
+export function setSessionToken(token: string): string {
+  SessionBridge.setSessionToken(UTSAndroid.getAppContext()!, token)
+  return ''
+}
+export function clearSessionToken(): string {
+  SessionBridge.clearSessionToken(UTSAndroid.getAppContext()!)
+  return ''
+}
+export function getPrintDeviceId(): string { return DevicePrintBridge.deviceId(UTSAndroid.getAppContext()!) }
+export function printDeviceLabel(apiUrl: string, clientId: string, requestJson: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    UTSAndroid.getDispatcher('io').async(function(_) {
+      try { resolve(DevicePrintBridge.print(UTSAndroid.getAppContext()!, apiUrl, clientId, requestJson)) } catch (error) { reject(error) }
+    }, null)
+  })
+}
+export function startDevicePrinting(apiUrl: string, clientId: string, configurationJson: string): string {
+  return DevicePrintBridge.start(UTSAndroid.getAppContext()!, apiUrl, clientId, configurationJson)
+}
+export function stopDevicePrinting(): string { return DevicePrintBridge.stop(UTSAndroid.getAppContext()!) }
+
+// Foreground settings discovery only: no host start, credentials or print side effects.
+export function startPrinterDiscovery(timeoutMs: number = 12000): string {
+  return PrinterDiscoveryBridge.startPrinterDiscovery(UTSAndroid.getAppContext()!, timeoutMs.toInt())
+}
+export function startUsbPrinterDiscovery(): string {
+  return PrinterDiscoveryBridge.startUsbPrinterDiscovery(UTSAndroid.getAppContext()!)
+}
+export function getPrinterDiscovery(scanId: string): string {
+  return PrinterDiscoveryBridge.getPrinterDiscovery(UTSAndroid.getAppContext()!, scanId)
+}
+export function cancelPrinterDiscovery(scanId: string): string {
+  return PrinterDiscoveryBridge.cancelPrinterDiscovery(UTSAndroid.getAppContext()!, scanId)
+}
+export function probeDiscoveredPrinter(scanId: string, candidateId: string, paperWidthMm: number = 210, paperHeightMm: number = 297): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    if (scanId.startsWith('usb:') && UTSAndroid.getUniActivity() == null) {
+      resolve('{"supported":true,"success":false,"reason":"FOREGROUND_ACTIVITY_REQUIRED","message":"请在前台打印机设置中允许USB访问"}')
+      return
+    }
+    UTSAndroid.getDispatcher('io').async(function(_) {
+      try { resolve(PrinterDiscoveryBridge.probeDiscoveredPrinter(UTSAndroid.getAppContext()!, scanId, candidateId, paperWidthMm.toDouble(), paperHeightMm.toDouble())) } catch (error) { reject(error) }
+    }, null)
+  })
+}
+
+export function requestHostPermissions(): Promise<string> {
+  return new Promise<string>((resolve, _) => {
+    const activity = UTSAndroid.getUniActivity()
+    if (activity == null) { resolve('{"granted":false,"reason":"FOREGROUND_ACTIVITY_REQUIRED"}'); return }
+    if (Build.VERSION.SDK_INT < 33) { resolve('{"granted":true}'); return }
+    UTSAndroid.getDispatcher('main').async(function(_) {
+      UTSAndroid.requestSystemPermission(activity, ['android.permission.POST_NOTIFICATIONS'], function(allRight: boolean, grantedList: string[]) {
+        resolve(allRight ? '{"granted":true}' : '{"granted":false,"reason":"NOTIFICATION_PERMISSION_REQUIRED"}')
+      }, function(doNotAskAgain: boolean, grantedList: string[]) {
+        resolve(doNotAskAgain ? '{"granted":false,"reason":"ENABLE_NOTIFICATIONS_IN_SYSTEM_SETTINGS"}' : '{"granted":false,"reason":"NOTIFICATION_PERMISSION_REQUIRED"}')
+      })
+    }, null)
+  })
+}
+
+export function probePrinter(endpointUri: string, paperWidthMm: number = 210, paperHeightMm: number = 297): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    UTSAndroid.getDispatcher('io').async(function(_) {
+      try { resolve(PrinterCheckBridge.probePrinter(UTSAndroid.getAppContext()!, endpointUri, paperWidthMm.toDouble(), paperHeightMm.toDouble())) } catch (error) { reject(error) }
+    }, null)
+  })
+}
+export function testPrinter(requestJson: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    UTSAndroid.getDispatcher('io').async(function(_) {
+      try { resolve(PrinterCheckBridge.testPrinter(UTSAndroid.getAppContext()!, requestJson)) } catch (error) { reject(error) }
+    }, null)
+  })
+}
+export function getPrinterTest(requestKey: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    UTSAndroid.getDispatcher('io').async(function(_) {
+      try { resolve(PrinterCheckBridge.getPrinterTest(UTSAndroid.getAppContext()!, requestKey)) } catch (error) { reject(error) }
+    }, null)
+  })
+}
+
+export function configureFromServer(apiUrl: string, sessionToken: string, hostId: string, factoryId: string, clientId: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    UTSAndroid.getDispatcher('io').async(function(_) {
+      try {
+        const result = HostBridge.configureFromServer(UTSAndroid.getAppContext()!, apiUrl, sessionToken, hostId, factoryId, clientId)
+        resolve(result)
+      } catch (error) { reject(error) }
+    }, null)
+  })
+}
+
+export function configureHost(configurationJson: string): string {
+  return HostBridge.configure(UTSAndroid.getAppContext()!, configurationJson)
+}
+export function startHost(): string {
+  const activity = UTSAndroid.getUniActivity()
+  if (activity == null) return '{"supported":true,"started":false,"reason":"FOREGROUND_ACTIVITY_REQUIRED"}'
+  return HostBridge.start(activity)
+}
+export function stopHost(): string { return HostBridge.stop(UTSAndroid.getAppContext()!) }
+export function getHostStatus(): string { return HostBridge.status(UTSAndroid.getAppContext()!) }
+export function clearHostCredentials(): void { HostBridge.clearCredentials(UTSAndroid.getAppContext()!) }

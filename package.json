@@ -1,0 +1,48 @@
+{
+  "name": "deqin-inout-app",
+  "version": "0.1.25",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:h5": "uni --host 127.0.0.1",
+    "build:h5": "node tools/production-build.cjs h5",
+    "build:app": "node tools/production-build.cjs app",
+    "verify:app": "node tools/verify-app-build.cjs",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "build:h5:dev": "uni build --mode development",
+    "build:app:dev": "uni build -p app --mode development",
+    "verify:app:dev": "node tools/verify-app-build.cjs --development",
+    "prepare:internal-usb": "node tools/internal-usb-profile.cjs",
+    "check:production": "node tools/production-build.cjs --check",
+    "build:app:usb": "node tools/internal-usb-build.cjs app",
+    "build:h5:usb": "node tools/internal-usb-build.cjs h5"
+  },
+  "dependencies": {
+    "@dcloudio/uni-app": "3.0.0-5020620260917001",
+    "@dcloudio/uni-app-plus": "3.0.0-5020620260917001",
+    "@dcloudio/uni-components": "3.0.0-5020620260917001",
+    "@dcloudio/uni-h5": "3.0.0-5020620260917001",
+    "crypto-js": "4.2.0",
+    "jsencrypt": "3.5.4",
+    "moment": "2.31.0",
+    "moment-timezone": "0.6.5",
+    "pinia": "2.1.7",
+    "vue": "3.4.21",
+    "vue-i18n": "9.14.5"
+  },
+  "devDependencies": {
+    "@dcloudio/types": "3.4.31",
+    "@dcloudio/uni-cli-shared": "3.0.0-5020620260917001",
+    "@dcloudio/uni-uts-v1": "3.0.0-5020620260917001",
+    "@dcloudio/vite-plugin-uni": "3.0.0-5020620260917001",
+    "@types/crypto-js": "4.2.2",
+    "@types/node": "20.19.9",
+    "@vue/tsconfig": "0.5.1",
+    "sass": "1.77.8",
+    "tsx": "4.20.5",
+    "typescript": "5.4.5",
+    "vite": "5.2.8",
+    "vue-tsc": "2.0.29"
+  }
+}
